@@ -1,25 +1,72 @@
-;------------- definiciones e includes ------------------------------
-.INCLUDE "m1280def.inc" ; Incluir definiciones de Registros para 1280
-;.INCLUDE "m2560def.inc" ; Incluir definiciones de Registros para 2560
+;call delay20us
+;call delay4ms
+call delay1s
+nop
 
-.equ INIT_VALUE = 0 ; Valor inicial R24
+ldi r16, 0x01
+ldi r18, 10 ; contador
 
-;------------- inicializar ------------------------------------------
-ldi R24,INIT_VALUE
-;------------- implementar ------------------------------------------
-;call delay103uS
-;call delay1mS
-;call delay1S
-;call myRand ; Retorna valor en R25
-;------------- ciclo principal --------------------------------------
-arriba: inc R24
-	cpi R24,10
-	breq abajo
-	out PORTA,R24
-	rjmp arriba
+loop:
+	call random
+    dec  r18
+    brne loop
+	nop
 
-abajo: dec R24
-	cpi R24,0
-	breq arriba
-	out PORTA,R24
-	rjmp abajo
+
+nop
+
+delay20us: 
+    ldi R24, 103
+	nxt:
+		dec R24
+   	    brne nxt
+nop
+ret
+
+
+delay4ms:
+	ldi R25, 90
+	nxt1:
+		ldi R26, 236
+		nxt2:
+			dec R26
+			brne nxt2
+		dec R25
+		brne nxt1
+ret
+
+
+delay1s:
+	ldi R27, 241
+	nxt3:
+		nop
+		nop
+		ldi R28, 71
+		nxt4:
+			nop
+			nop
+			ldi R29, 186
+			nxt5:
+				nop
+				nop
+				dec R29
+				brne nxt5
+			dec R28
+			brne nxt4
+		dec R27
+		brne nxt3
+nop
+nop
+ret
+
+
+random:
+	ldi R17, 0x1D	; mascara
+	lsr r16			; shift -->
+	brcc skip		; se revisa C, si es 0 --> skip
+	eor R16, R17	; si no se skipea se aplica xor
+skip:
+	mov R25, R16	; muevo el valor a R25 para visualizar exclusivamente en ese registro
+	ret 
+
+
